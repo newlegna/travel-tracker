@@ -31,7 +31,7 @@ export function YearMap({ points, path, mini = false, heatmap = false }: YearMap
       style: styleUrl,
       center: points[0] ? [points[0].lng, points[0].lat] : [0, 20],
       zoom: points.length > 0 ? (mini ? 1.6 : 3) : 1.2,
-      attributionControl: !mini,
+      attributionControl: mini ? false : undefined,
       interactive: !mini,
     });
 
