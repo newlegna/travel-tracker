@@ -23,11 +23,14 @@
     "react-dom": "^19.2.6"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.5",
     "@types/node": "^22.9.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.4.20",
     "drizzle-kit": "^0.31.10",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^16.2.5",
     "postcss": "^8.5.10",
     "tailwindcss": "^3.4.15",
     "tsx": "^4.19.2",
