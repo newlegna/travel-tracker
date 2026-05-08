@@ -4,6 +4,7 @@ import { writeFile, mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 import { extractExif } from "@/app/lib/exif";
+import { reverseGeocodeCity } from "@/app/lib/geocode";
 import { insertPhotos, deletePhoto as deletePhotoQuery } from "@/app/db/queries";
 import { revalidatePath } from "next/cache";
 import type { NewPhoto } from "@/app/db/schema";
@@ -17,23 +18,6 @@ const ALLOWED_TYPES = new Set([
   "image/heic",
   "image/heif",
 ]);
-
-function geocodeOffline(lat: number, lng: number) {
-  try {
-    const { geocode } = require("offline-geocode-city"); // dynamic require for server-only module
-    const result = geocode(lat, lng);
-    if (result) {
-      return {
-        city: result.city ?? result.name ?? null,
-        country: result.country ?? null,
-        countryCode: result.countryCode ?? null,
-      };
-    }
-  } catch {
-    // offline-geocode-city not available at import time in some contexts
-  }
-  return { city: null, country: null, countryCode: null };
-}
 
 export type PhotoUploadState = {
   error?: string;
@@ -77,7 +61,7 @@ export async function uploadPhotosAction(
       const storageKey = join(UPLOAD_DIR, `${randomUUID()}.${ext}`);
       await writeFile(storageKey, Buffer.from(buffer));
 
-      const geo = geocodeOffline(exif.lat, exif.lng);
+      const geo = reverseGeocodeCity(exif.lat, exif.lng);
 
       newPhotos.push({
         filename: file.name,
