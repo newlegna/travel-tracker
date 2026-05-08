@@ -3,6 +3,7 @@ import Link from "next/link";
 const links = [
   { href: "/", label: "Years" },
   { href: "/all-time", label: "All time" },
+  { href: "/photos", label: "Photos" },
   { href: "/import", label: "Import" },
   { href: "/settings", label: "Settings" },
 ];
