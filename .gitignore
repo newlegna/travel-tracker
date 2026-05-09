@@ -23,5 +23,8 @@ npm-debug.log*
 # drizzle
 drizzle/
 
+# uploaded photos
+.photo-uploads/
+
 # test
 coverage/
