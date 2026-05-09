@@ -67,6 +67,28 @@ export const settings = pgTable("settings", {
   value: jsonb("value").notNull(),
 });
 
+export const photos = pgTable(
+  "photos",
+  {
+    id: serial("id").primaryKey(),
+    filename: text("filename").notNull(),
+    mimeType: varchar("mime_type", { length: 64 }).notNull(),
+    lat: doublePrecision("lat").notNull(),
+    lng: doublePrecision("lng").notNull(),
+    city: text("city"),
+    country: text("country"),
+    countryCode: varchar("country_code", { length: 2 }),
+    takenAt: timestamp("taken_at", { withTimezone: true }),
+    uploadedAt: timestamp("uploaded_at", { withTimezone: true }).notNull().defaultNow(),
+    storageKey: text("storage_key").notNull(),
+    widthPx: integer("width_px"),
+    heightPx: integer("height_px"),
+  },
+  (table) => ({
+    takenAtIdx: index("photos_taken_at_idx").on(table.takenAt),
+  }),
+);
+
 export const imports = pgTable("imports", {
   id: serial("id").primaryKey(),
   filename: text("filename").notNull(),
@@ -100,3 +122,5 @@ export type Visit = typeof visits.$inferSelect;
 export type NewVisit = typeof visits.$inferInsert;
 export type Trip = typeof trips.$inferSelect;
 export type NewTrip = typeof trips.$inferInsert;
+export type Photo = typeof photos.$inferSelect;
+export type NewPhoto = typeof photos.$inferInsert;

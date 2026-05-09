@@ -1,6 +1,6 @@
 import { asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { getDatabase, requireDatabase } from "@/app/db";
-import { imports, places, settings, trips, visits, type NewPlace, type NewVisit } from "@/app/db/schema";
+import { imports, photos, places, settings, trips, visits, type NewPhoto, type NewPlace, type NewVisit } from "@/app/db/schema";
 import type { ImportPreview } from "@/app/lib/import-types";
 import { dateOnly, daysBetween, placeKey } from "@/app/lib/geo";
 
@@ -362,6 +362,33 @@ export async function exportJson() {
     null,
     2,
   );
+}
+
+export async function insertPhotos(newPhotos: NewPhoto[]) {
+  if (newPhotos.length === 0) return [];
+  const db = requireDatabase();
+  return db.insert(photos).values(newPhotos).returning({ id: photos.id });
+}
+
+export async function getPhotos() {
+  const db = getDatabase();
+  if (!db) return [];
+  return db
+    .select()
+    .from(photos)
+    .orderBy(desc(photos.takenAt), desc(photos.uploadedAt));
+}
+
+export async function getPhoto(id: number) {
+  const db = getDatabase();
+  if (!db) return null;
+  const rows = await db.select().from(photos).where(eq(photos.id, id));
+  return rows[0] ?? null;
+}
+
+export async function deletePhoto(id: number) {
+  const db = requireDatabase();
+  await db.delete(photos).where(eq(photos.id, id));
 }
 
 export async function updateTrip(id: number, values: { name?: string; notes?: string | null }) {
