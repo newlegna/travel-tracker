@@ -34,8 +34,16 @@ describe("photo image helpers", () => {
   });
 
   it("keeps browser-compatible responses unchanged", async () => {
-    const buffer = Buffer.from("image");
+    const buffer = Buffer.from([0xff, 0xd8, 0xff, 0x00]);
     const prepared = await preparePhotoForResponse(buffer, "image/jpeg", "photo.jpg");
+
+    expect(prepared.buffer).toBe(buffer);
+    expect(prepared.mimeType).toBe(JPEG_MIME_TYPE);
+  });
+
+  it("does not reconvert stored JPEGs whose original filenames were HEIC", async () => {
+    const buffer = Buffer.from([0xff, 0xd8, 0xff, 0x00]);
+    const prepared = await preparePhotoForResponse(buffer, "image/jpeg", "IMG_1234.HEIC");
 
     expect(prepared.buffer).toBe(buffer);
     expect(prepared.mimeType).toBe(JPEG_MIME_TYPE);

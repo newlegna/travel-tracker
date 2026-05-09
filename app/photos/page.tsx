@@ -16,6 +16,7 @@ export default async function PhotosPage() {
     city: row.city,
     country: row.country,
     takenAt: row.takenAt ? row.takenAt.toISOString() : null,
+    uploadedAt: row.uploadedAt.toISOString(),
   }));
 
   return (

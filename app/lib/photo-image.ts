@@ -30,6 +30,38 @@ function normalizedMimeType(mimeType: string) {
   return mimeType.toLowerCase().split(";")[0].trim();
 }
 
+function isJpegBuffer(buffer: Buffer) {
+  return buffer.length >= 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff;
+}
+
+function isPngBuffer(buffer: Buffer) {
+  return buffer.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
+}
+
+function isWebpBuffer(buffer: Buffer) {
+  return (
+    buffer.length >= 12 &&
+    buffer.subarray(0, 4).toString("ascii") === "RIFF" &&
+    buffer.subarray(8, 12).toString("ascii") === "WEBP"
+  );
+}
+
+function isHeicBuffer(buffer: Buffer) {
+  if (buffer.length < 12) {
+    return false;
+  }
+
+  const boxType = buffer.subarray(4, 8).toString("ascii");
+  if (boxType !== "ftyp") {
+    return false;
+  }
+
+  const brands = buffer.subarray(8, Math.min(buffer.length, 64)).toString("ascii");
+  return ["heic", "heix", "hevc", "hevx", "heif", "heim", "heis", "mif1", "msf1"].some((brand) =>
+    brands.includes(brand),
+  );
+}
+
 function fileExtension(filename: string) {
   const extension = filename.split(".").pop()?.toLowerCase();
   return extension && /^[a-z0-9]+$/.test(extension) ? extension : "jpg";
@@ -75,11 +107,23 @@ export async function preparePhotoForStorage(buffer: Buffer, mimeType: string, f
 }
 
 export async function preparePhotoForResponse(buffer: Buffer, mimeType: string, filename: string) {
-  if (isHeicImage(mimeType, filename)) {
+  if (isHeicBuffer(buffer)) {
     return {
       buffer: await convertHeicToJpeg(buffer),
       mimeType: JPEG_MIME_TYPE,
     };
+  }
+
+  if (isJpegBuffer(buffer)) {
+    return { buffer, mimeType: JPEG_MIME_TYPE };
+  }
+
+  if (isPngBuffer(buffer)) {
+    return { buffer, mimeType: "image/png" };
+  }
+
+  if (isWebpBuffer(buffer)) {
+    return { buffer, mimeType: "image/webp" };
   }
 
   return {

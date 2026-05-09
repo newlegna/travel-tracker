@@ -11,6 +11,7 @@ export type PhotoPoint = {
   city: string | null;
   country: string | null;
   takenAt: string | null;
+  uploadedAt: string;
 };
 
 type PhotoMapProps = {
@@ -53,6 +54,7 @@ export function PhotoMap({ photos }: PhotoMapProps) {
             city: p.city,
             country: p.country,
             takenAt: p.takenAt,
+            uploadedAt: p.uploadedAt,
           },
           geometry: { type: "Point", coordinates: [p.lng, p.lat] },
         })),
@@ -112,12 +114,13 @@ export function PhotoMap({ photos }: PhotoMapProps) {
 
         const location = [props.city, props.country].filter(Boolean).join(", ") || "Unknown location";
         const date = props.takenAt ? formatDate(props.takenAt) : "";
+        const imageSrc = `/api/photos/${props.id}?v=${encodeURIComponent(props.uploadedAt)}`;
 
         new maplibregl.Popup({ offset: 12, maxWidth: "280px" })
           .setLngLat(coords)
           .setHTML(
             `<div style="text-align:center">` +
-              `<img src="/api/photos/${props.id}" ` +
+              `<img src="${imageSrc}" ` +
               `style="width:240px;height:auto;border-radius:8px;margin-bottom:8px" ` +
               `alt="${props.filename}" />` +
               `<div style="font-weight:600;font-size:14px">${location}</div>` +

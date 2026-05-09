@@ -41,6 +41,10 @@ function formatDate(iso: string) {
   }).format(new Date(iso));
 }
 
+function photoImageSrc(photo: PhotoPoint) {
+  return `/api/photos/${photo.id}?v=${encodeURIComponent(photo.uploadedAt)}`;
+}
+
 export function PhotosClient({ photos }: { photos: PhotoPoint[] }) {
   const [state, formAction] = useActionState(uploadPhotosAction, initialState);
 
@@ -93,7 +97,7 @@ export function PhotosClient({ photos }: { photos: PhotoPoint[] }) {
                 >
                   <div className="aspect-[4/3] overflow-hidden">
                     <img
-                      src={`/api/photos/${photo.id}`}
+                      src={photoImageSrc(photo)}
                       alt={photo.filename}
                       className="h-full w-full object-cover transition group-hover:scale-105"
                       loading="lazy"
