@@ -1,6 +1,7 @@
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { deletePhotoAction, uploadPhotosAction, type PhotoUploadState } from "@/app/photos/actions";
 import { PhotoMap, type PhotoPoint } from "@/app/components/PhotoMap";
 
@@ -41,7 +42,7 @@ function formatDate(iso: string) {
 }
 
 export function PhotosClient({ photos }: { photos: PhotoPoint[] }) {
-  const [state, formAction] = useFormState(uploadPhotosAction, initialState);
+  const [state, formAction] = useActionState(uploadPhotosAction, initialState);
 
   return (
     <div className="space-y-8">
