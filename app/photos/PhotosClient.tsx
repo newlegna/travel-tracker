@@ -25,7 +25,7 @@ function DeleteButton() {
     <button
       type="submit"
       disabled={pending}
-      className="rounded-full border border-red-200 px-3 py-1 text-xs font-semibold text-red-700 transition hover:border-red-300 hover:bg-red-50 disabled:cursor-wait disabled:opacity-60"
+      className="rounded-full bg-red-600 px-3 py-1 text-xs font-semibold text-white transition hover:bg-red-700 disabled:cursor-wait disabled:opacity-60"
     >
       {pending ? "Deleting..." : "Delete"}
     </button>
