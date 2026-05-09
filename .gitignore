@@ -25,3 +25,6 @@ drizzle/
 
 # test
 coverage/
+
+# photos
+.photo-uploads/
