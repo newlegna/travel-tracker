@@ -388,7 +388,11 @@ export async function getPhoto(id: number) {
 
 export async function deletePhoto(id: number) {
   const db = requireDatabase();
-  await db.delete(photos).where(eq(photos.id, id));
+  const [deleted] = await db
+    .delete(photos)
+    .where(eq(photos.id, id))
+    .returning({ storageKey: photos.storageKey });
+  return deleted ?? null;
 }
 
 export async function updateTrip(id: number, values: { name?: string; notes?: string | null }) {

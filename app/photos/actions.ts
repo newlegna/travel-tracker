@@ -1,6 +1,6 @@
 "use server";
 
-import { writeFile, mkdir } from "node:fs/promises";
+import { mkdir, unlink, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 import { extractExif } from "@/app/lib/exif";
@@ -95,10 +95,24 @@ export async function uploadPhotosAction(
   }
 }
 
+async function deleteStoredPhoto(storageKey: string) {
+  try {
+    await unlink(storageKey);
+  } catch (error) {
+    if (error instanceof Error && "code" in error && error.code === "ENOENT") {
+      return;
+    }
+    throw error;
+  }
+}
+
 export async function deletePhotoAction(formData: FormData) {
   const id = Number(formData.get("photoId"));
   if (Number.isFinite(id)) {
-    await deletePhotoQuery(id);
-    revalidatePath("/photos");
+    const deleted = await deletePhotoQuery(id);
+    if (deleted) {
+      await deleteStoredPhoto(deleted.storageKey);
+      revalidatePath("/photos");
+    }
   }
 }

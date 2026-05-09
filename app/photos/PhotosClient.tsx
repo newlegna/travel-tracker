@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormState, useFormStatus } from "react-dom";
-import { uploadPhotosAction, type PhotoUploadState } from "@/app/photos/actions";
+import { deletePhotoAction, uploadPhotosAction, type PhotoUploadState } from "@/app/photos/actions";
 import { PhotoMap, type PhotoPoint } from "@/app/components/PhotoMap";
 
 const initialState: PhotoUploadState = {};
@@ -15,6 +15,19 @@ function UploadButton() {
       className="rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white transition hover:bg-moss disabled:cursor-wait disabled:opacity-60"
     >
       {pending ? "Uploading..." : "Upload photos"}
+    </button>
+  );
+}
+
+function DeleteButton() {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="rounded-full border border-red-200 px-3 py-1 text-xs font-semibold text-red-700 transition hover:border-red-300 hover:bg-red-50 disabled:cursor-wait disabled:opacity-60"
+    >
+      {pending ? "Deleting..." : "Delete"}
     </button>
   );
 }
@@ -85,13 +98,26 @@ export function PhotosClient({ photos }: { photos: PhotoPoint[] }) {
                       loading="lazy"
                     />
                   </div>
-                  <div className="p-3">
-                    <p className="truncate text-sm font-medium text-ink">
-                      {[photo.city, photo.country].filter(Boolean).join(", ") || "Unknown location"}
-                    </p>
-                    {photo.takenAt ? (
-                      <p className="text-xs text-stone-500">{formatDate(photo.takenAt)}</p>
-                    ) : null}
+                  <div className="space-y-3 p-3">
+                    <div>
+                      <p className="truncate text-sm font-medium text-ink">
+                        {[photo.city, photo.country].filter(Boolean).join(", ") || "Unknown location"}
+                      </p>
+                      {photo.takenAt ? (
+                        <p className="text-xs text-stone-500">{formatDate(photo.takenAt)}</p>
+                      ) : null}
+                    </div>
+                    <form
+                      action={deletePhotoAction}
+                      onSubmit={(event) => {
+                        if (!window.confirm(`Delete ${photo.filename}? This cannot be undone.`)) {
+                          event.preventDefault();
+                        }
+                      }}
+                    >
+                      <input type="hidden" name="photoId" value={photo.id} />
+                      <DeleteButton />
+                    </form>
                   </div>
                 </div>
               ))}
