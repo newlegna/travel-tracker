@@ -1,6 +1,7 @@
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { deletePhotoAction, uploadPhotosAction, type PhotoUploadState } from "@/app/photos/actions";
 import { PhotoMap, type PhotoPoint } from "@/app/components/PhotoMap";
 
@@ -40,8 +41,12 @@ function formatDate(iso: string) {
   }).format(new Date(iso));
 }
 
+function photoImageSrc(photo: PhotoPoint) {
+  return `/api/photos/${photo.id}?v=${encodeURIComponent(photo.uploadedAt)}`;
+}
+
 export function PhotosClient({ photos }: { photos: PhotoPoint[] }) {
-  const [state, formAction] = useFormState(uploadPhotosAction, initialState);
+  const [state, formAction] = useActionState(uploadPhotosAction, initialState);
 
   return (
     <div className="space-y-8">
@@ -92,7 +97,7 @@ export function PhotosClient({ photos }: { photos: PhotoPoint[] }) {
                 >
                   <div className="aspect-[4/3] overflow-hidden">
                     <img
-                      src={`/api/photos/${photo.id}`}
+                      src={photoImageSrc(photo)}
                       alt={photo.filename}
                       className="h-full w-full object-cover transition group-hover:scale-105"
                       loading="lazy"

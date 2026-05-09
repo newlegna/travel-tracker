@@ -1,7 +1,14 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getPhoto } from "@/app/db/queries";
+import { preparePhotoForResponse } from "@/app/lib/photo-image";
 import { readFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
+
+function toArrayBuffer(buffer: Buffer) {
+  const arrayBuffer = new ArrayBuffer(buffer.byteLength);
+  new Uint8Array(arrayBuffer).set(buffer);
+  return arrayBuffer;
+}
 
 export async function GET(
   _request: NextRequest,
@@ -24,9 +31,10 @@ export async function GET(
   }
 
   const buffer = await readFile(filePath);
-  return new NextResponse(buffer, {
+  const image = await preparePhotoForResponse(buffer, photo.mimeType, photo.filename);
+  return new NextResponse(toArrayBuffer(image.buffer), {
     headers: {
-      "Content-Type": photo.mimeType,
+      "Content-Type": image.mimeType,
       "Cache-Control": "public, max-age=31536000, immutable",
     },
   });

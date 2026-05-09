@@ -5,19 +5,12 @@ import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 import { extractExif } from "@/app/lib/exif";
 import { reverseGeocodeCity } from "@/app/lib/geocode";
+import { isSupportedPhoto, preparePhotoForStorage } from "@/app/lib/photo-image";
 import { insertPhotos, deletePhoto as deletePhotoQuery } from "@/app/db/queries";
 import { revalidatePath } from "next/cache";
 import type { NewPhoto } from "@/app/db/schema";
 
 const UPLOAD_DIR = join(process.cwd(), ".photo-uploads");
-
-const ALLOWED_TYPES = new Set([
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "image/heic",
-  "image/heif",
-]);
 
 export type PhotoUploadState = {
   error?: string;
@@ -45,27 +38,35 @@ export async function uploadPhotosAction(
     let skipped = 0;
 
     for (const file of files) {
-      if (!ALLOWED_TYPES.has(file.type)) {
+      if (!isSupportedPhoto(file.type, file.name)) {
         skipped++;
         continue;
       }
 
-      const buffer = await file.arrayBuffer();
-      const exif = extractExif(buffer);
+      const arrayBuffer = await file.arrayBuffer();
+      const inputBuffer = Buffer.from(arrayBuffer);
+      const exif = extractExif(arrayBuffer);
       if (!exif) {
         skipped++;
         continue;
       }
 
-      const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-      const storageKey = join(UPLOAD_DIR, `${randomUUID()}.${ext}`);
-      await writeFile(storageKey, Buffer.from(buffer));
+      let storedPhoto: Awaited<ReturnType<typeof preparePhotoForStorage>>;
+      try {
+        storedPhoto = await preparePhotoForStorage(inputBuffer, file.type, file.name);
+      } catch {
+        skipped++;
+        continue;
+      }
+
+      const storageKey = join(UPLOAD_DIR, `${randomUUID()}.${storedPhoto.extension}`);
+      await writeFile(storageKey, storedPhoto.buffer);
 
       const geo = reverseGeocodeCity(exif.lat, exif.lng);
 
       newPhotos.push({
         filename: file.name,
-        mimeType: file.type,
+        mimeType: storedPhoto.mimeType,
         lat: exif.lat,
         lng: exif.lng,
         city: geo.city,
