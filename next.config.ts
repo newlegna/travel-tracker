@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ["offline-geocode-city"],
+  serverExternalPackages: ["heic-convert", "offline-geocode-city"],
   experimental: {
     serverActions: {
       bodySizeLimit: "50mb",
