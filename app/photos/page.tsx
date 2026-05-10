@@ -1,4 +1,5 @@
 import { EmptyState } from "@/app/components/EmptyState";
+import { PageHeader } from "@/app/components/PageHeader";
 import { getPhotos } from "@/app/db/queries";
 import { PhotosClient } from "@/app/photos/PhotosClient";
 import type { PhotoPoint } from "@/app/components/PhotoMap";
@@ -19,15 +20,12 @@ export default async function PhotosPage() {
   }));
 
   return (
-    <div className="space-y-6">
-      <div>
-        <p className="text-sm uppercase tracking-[0.3em] text-moss">Photos</p>
-        <h1 className="text-4xl font-semibold text-ink">Photo map</h1>
-        <p className="mt-3 max-w-3xl text-stone-600">
-          Upload geotagged photos and see exactly where they were taken on the map.
-          Click a marker to view the photo.
-        </p>
-      </div>
+    <div className="space-y-10">
+      <PageHeader
+        eyebrow="Photos"
+        title="Photo map"
+        description="Upload geotagged photos and see exactly where they were taken on the map. Click a marker to view the photo."
+      />
       <PhotosClient photos={photos} />
       {photos.length === 0 ? (
         <EmptyState

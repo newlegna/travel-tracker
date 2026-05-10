@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { EmptyState } from "@/app/components/EmptyState";
+import { PageHeader } from "@/app/components/PageHeader";
 import { YearMap } from "@/app/components/YearMap";
 import { YearStats } from "@/app/components/YearStats";
 import { getYears } from "@/app/db/queries";
@@ -21,19 +22,21 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="space-y-8">
-      <div>
-        <p className="text-sm uppercase tracking-[0.3em] text-moss">Browse</p>
-        <h1 className="text-4xl font-semibold text-ink">Your years on the map</h1>
-      </div>
-      <div className="space-y-6">
+    <div className="space-y-10">
+      <PageHeader eyebrow="Browse" title="Your years on the map" />
+      <div className="space-y-7">
         {years.map((year) => (
-          <article key={year.year} className="overflow-hidden rounded-3xl bg-white shadow-sm">
-            <div className="grid gap-0 lg:grid-cols-[0.9fr_1.1fr]">
-              <div className="p-6">
-                <Link href={`/year/${year.year}`} className="group">
-                  <p className="text-sm uppercase tracking-[0.25em] text-moss">Year</p>
-                  <h2 className="mt-2 text-5xl font-semibold text-ink group-hover:text-moss">{year.year}</h2>
+          <article
+            key={year.year}
+            className="overflow-hidden rounded-2xl border border-stone-200/80 bg-white shadow-card"
+          >
+            <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.12fr)] lg:divide-x lg:divide-stone-100">
+              <div className="p-6 sm:p-8">
+                <Link href={`/year/${year.year}`} className="group inline-block">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-moss">Year</p>
+                  <h2 className="mt-1 text-4xl font-semibold tracking-tight text-ink sm:text-5xl group-hover:text-moss">
+                    {year.year}
+                  </h2>
                 </Link>
                 <div className="mt-6">
                   <YearStats
@@ -46,7 +49,9 @@ export default async function HomePage() {
                   />
                 </div>
               </div>
-              <YearMap points={year.points} mini />
+              <div className="border-t border-stone-100 bg-stone-50/25 p-4 sm:p-5 lg:border-t-0">
+                <YearMap points={year.points} mini />
+              </div>
             </div>
           </article>
         ))}
