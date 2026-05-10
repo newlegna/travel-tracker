@@ -10,20 +10,23 @@ const links = [
 
 export function Nav() {
   return (
-    <header className="border-b border-stone-200 bg-sand/90 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-        <Link href="/" className="group">
-          <p className="text-sm uppercase tracking-[0.3em] text-moss">Travel Tracker</p>
-          <h1 className="text-2xl font-semibold text-ink transition group-hover:text-moss">
+    <header className="sticky top-0 z-20 border-b border-stone-200/90 bg-sand/90 backdrop-blur-md">
+      <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+        <Link href="/" className="group min-w-0 shrink-0">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-moss">Travel Tracker</p>
+          <h1 className="mt-0.5 text-xl font-semibold tracking-tight text-ink transition group-hover:text-moss sm:text-2xl">
             Year-by-Year
           </h1>
         </Link>
-        <nav className="flex flex-wrap gap-2 text-sm font-medium text-stone-700">
+        <nav
+          aria-label="Main"
+          className="flex flex-wrap items-center gap-1 rounded-full border border-stone-200/90 bg-white/85 p-1 shadow-card"
+        >
           {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="rounded-full border border-stone-300 px-4 py-2 transition hover:border-moss hover:bg-white"
+              className="rounded-full px-3.5 py-2 text-sm font-medium text-stone-600 transition hover:bg-stone-100 hover:text-ink"
             >
               {link.label}
             </Link>

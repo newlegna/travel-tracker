@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { EmptyState } from "@/app/components/EmptyState";
+import { PageHeader } from "@/app/components/PageHeader";
 import { YearMap } from "@/app/components/YearMap";
 import { YearStats } from "@/app/components/YearStats";
 import { getAllTime } from "@/app/db/queries";
@@ -20,11 +21,8 @@ export default async function AllTimePage() {
   }
 
   return (
-    <div className="space-y-8">
-      <div>
-        <p className="text-sm uppercase tracking-[0.3em] text-moss">All time</p>
-        <h1 className="text-4xl font-semibold text-ink">Lifetime travel map</h1>
-      </div>
+    <div className="space-y-10">
+      <PageHeader eyebrow="All time" title="Lifetime travel map" />
       <YearMap
         heatmap
         points={data.visits.map((visit) => ({
@@ -41,20 +39,39 @@ export default async function AllTimePage() {
           { label: "Visits", value: data.visits.length },
         ]}
       />
-      <section className="rounded-3xl bg-white p-6 shadow-sm">
-        <h2 className="text-2xl font-semibold text-ink">Year over year</h2>
-        <div className="mt-5 divide-y divide-stone-200">
+      <section className="rounded-2xl border border-stone-200/80 bg-white p-6 shadow-card sm:p-7">
+        <h2 className="text-lg font-semibold text-ink">Year over year</h2>
+        <div className="mt-4 hidden text-xs font-semibold uppercase tracking-wide text-stone-500 sm:grid sm:grid-cols-[minmax(0,1fr)_repeat(4,minmax(0,1fr))] sm:gap-x-4 sm:border-b sm:border-stone-100 sm:pb-2">
+          <span>Year</span>
+          <span className="text-right sm:text-left">Countries</span>
+          <span className="text-right sm:text-left">Days away</span>
+          <span className="text-right sm:text-left">Trips</span>
+          <span className="text-right sm:text-left">Visits</span>
+        </div>
+        <div className="mt-2 divide-y divide-stone-100">
           {data.years.map((year) => (
             <Link
               href={`/year/${year.year}`}
               key={year.year}
-              className="grid gap-2 py-4 text-sm transition hover:text-moss sm:grid-cols-5"
+              className="grid grid-cols-2 gap-x-4 gap-y-1 py-4 text-sm transition hover:text-moss sm:grid-cols-5 sm:items-center sm:gap-y-0"
             >
-              <span className="text-lg font-semibold text-ink">{year.year}</span>
-              <span>{year.countries} countries</span>
-              <span>{year.daysAway} days away</span>
-              <span>{year.tripCount} trips</span>
-              <span>{year.visitCount} visits</span>
+              <span className="col-span-2 text-base font-semibold text-ink sm:col-span-1">{year.year}</span>
+              <span className="text-stone-700">
+                <span className="text-stone-500 sm:hidden">Countries · </span>
+                {year.countries}
+              </span>
+              <span className="text-stone-700">
+                <span className="text-stone-500 sm:hidden">Days · </span>
+                {year.daysAway}
+              </span>
+              <span className="text-stone-700">
+                <span className="text-stone-500 sm:hidden">Trips · </span>
+                {year.tripCount}
+              </span>
+              <span className="text-stone-700">
+                <span className="text-stone-500 sm:hidden">Visits · </span>
+                {year.visitCount}
+              </span>
             </Link>
           ))}
         </div>

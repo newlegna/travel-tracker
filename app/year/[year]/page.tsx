@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { EmptyState } from "@/app/components/EmptyState";
+import { PageHeader } from "@/app/components/PageHeader";
 import { YearMap } from "@/app/components/YearMap";
 import { YearStats } from "@/app/components/YearStats";
 import { getYear } from "@/app/db/queries";
@@ -37,12 +38,9 @@ export default async function YearPage({ params }: YearPageProps) {
   }));
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_22rem]">
-      <section className="space-y-6">
-        <div>
-          <p className="text-sm uppercase tracking-[0.3em] text-moss">Year</p>
-          <h1 className="text-4xl font-semibold text-ink">{year}</h1>
-        </div>
+    <div className="grid gap-10 lg:grid-cols-[1fr_20rem] xl:grid-cols-[1fr_22rem]">
+      <div className="min-w-0 space-y-8">
+        <PageHeader eyebrow="Year" title={String(year)} />
         <YearMap points={points} path={points} />
         <YearStats
           stats={[
@@ -56,34 +54,41 @@ export default async function YearPage({ params }: YearPageProps) {
             },
           ]}
         />
-      </section>
-      <aside className="space-y-6">
-        <section className="rounded-3xl bg-white p-6 shadow-sm">
-          <h2 className="text-xl font-semibold text-ink">Trips</h2>
-          <div className="mt-4 space-y-3">
+      </div>
+      <aside className="space-y-6 lg:pt-1">
+        <section className="rounded-2xl border border-stone-200/80 bg-white p-5 shadow-card sm:p-6">
+          <h2 className="text-base font-semibold text-ink">Trips</h2>
+          <ul className="mt-4 list-none space-y-2 p-0">
             {data.trips.map((trip) => (
-              <Link
-                key={trip.id}
-                href={`/trip/${trip.id}`}
-                className="block rounded-2xl border border-stone-200 p-4 transition hover:border-moss"
-              >
-                <span className="block font-semibold text-ink">{trip.name}</span>
-                <span className="text-sm text-stone-600">
-                  {trip.startDate} to {trip.endDate}
-                </span>
-              </Link>
+              <li key={trip.id}>
+                <Link
+                  href={`/trip/${trip.id}`}
+                  className="block rounded-xl border border-stone-200/70 bg-stone-50/30 px-4 py-3 transition hover:border-moss/40 hover:bg-white"
+                >
+                  <span className="block font-medium text-ink">{trip.name}</span>
+                  <span className="mt-0.5 block text-xs text-stone-600">
+                    {trip.startDate} to {trip.endDate}
+                  </span>
+                </Link>
+              </li>
             ))}
-          </div>
+          </ul>
         </section>
-        <section className="rounded-3xl bg-white p-6 shadow-sm">
-          <h2 className="text-xl font-semibold text-ink">Top places</h2>
-          <div className="mt-4 space-y-3">
+        <section className="rounded-2xl border border-stone-200/80 bg-white p-5 shadow-card sm:p-6">
+          <h2 className="text-base font-semibold text-ink">Top places</h2>
+          <ul className="mt-4 list-none space-y-2.5 p-0">
             {data.stats.topPlaces.map(({ place, count }) => (
-              <Link key={place.id} href={`/place/${place.id}`} className="block text-sm text-stone-700 hover:text-moss">
-                {place.displayName ?? "Unknown place"} · {count} visits
-              </Link>
+              <li key={place.id}>
+                <Link
+                  href={`/place/${place.id}`}
+                  className="block rounded-lg px-1 py-1 text-sm text-stone-700 transition hover:bg-stone-50 hover:text-moss"
+                >
+                  <span className="font-medium text-ink">{place.displayName ?? "Unknown place"}</span>
+                  <span className="text-stone-500"> · {count} visits</span>
+                </Link>
+              </li>
             ))}
-          </div>
+          </ul>
         </section>
       </aside>
     </div>

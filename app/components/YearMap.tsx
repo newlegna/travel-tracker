@@ -155,7 +155,7 @@ export function YearMap({ points, path, mini = false, heatmap = false }: YearMap
   return (
     <div
       ref={containerRef}
-      className={mini ? "h-48 w-full overflow-hidden rounded-2xl" : "h-[34rem] w-full overflow-hidden rounded-3xl"}
+      className={mini ? "h-52 w-full min-h-[11rem] overflow-hidden rounded-xl sm:h-56" : "h-[34rem] w-full overflow-hidden rounded-2xl"}
     />
   );
 }

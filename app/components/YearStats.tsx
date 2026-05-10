@@ -6,14 +6,17 @@ type Stat = {
 
 export function YearStats({ stats }: { stats: Stat[] }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
       {stats.map((stat) => (
-        <div key={stat.label} className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
-          <p className="text-sm font-medium text-stone-500">{stat.label}</p>
-          <p className="mt-2 text-3xl font-semibold text-ink">{stat.value}</p>
-          {stat.detail ? <p className="mt-1 text-sm text-stone-600">{stat.detail}</p> : null}
+        <div
+          key={stat.label}
+          className="rounded-xl border border-stone-200/80 bg-stone-50/50 px-4 py-3.5 shadow-card"
+        >
+          <dt className="text-xs font-semibold uppercase tracking-wide text-stone-500">{stat.label}</dt>
+          <dd className="mt-1.5 text-2xl font-semibold tabular-nums tracking-tight text-ink sm:text-[1.65rem]">{stat.value}</dd>
+          {stat.detail ? <dd className="mt-1 text-sm leading-snug text-stone-600">{stat.detail}</dd> : null}
         </div>
       ))}
-    </div>
+    </dl>
   );
 }

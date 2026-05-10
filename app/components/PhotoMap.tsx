@@ -173,7 +173,7 @@ export function PhotoMap({ photos }: PhotoMapProps) {
   return (
     <div
       ref={containerRef}
-      className="h-[34rem] w-full overflow-hidden rounded-3xl"
+      className="h-[34rem] w-full overflow-hidden rounded-2xl border border-stone-200/60 shadow-card"
     />
   );
 }
